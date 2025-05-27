@@ -2,35 +2,32 @@
 
 ## Project Overview  
 This project explores a key question for game developers and publishers:  
-**"If we're going to build a game, which genre gives us the best chance to succeed?"**  
+**"If we're going to build a game, which genre gives us the best chance to succeed?"**
 
-To answer that, we analyzed real-world game data and built predictive models to understand how **critic reviews and genre** relate to sales performance.  
-By focusing on measurable trends — not just assumptions — we aim to guide studios in making smarter choices before even starting development.  
-Our core approach uses a simple, explainable machine learning model to predict how well a game might sell based on its **genre and review quality**.
+To answer that, we analyzed real-world video game data and built a predictive model to understand how **critic score** and **genre** influence a game's commercial success.  
+We focused on using a **machine learning model** to estimate how much a game might sell — before it’s even made — based solely on its **critic score**.
 
 ---
 
 ## Objectives  
 1. **Genre-Based Sales Modeling**  
-   Understand how critic score affects sales across different game genres.
+   Understand how critic scores impact sales across different game genres.  
 2. **One-Feature Machine Learning Task**  
-   Train a linear regression model using only critic score to predict log-transformed sales.
+   Build a regression model using only `critic_score_scaled` to predict `log_total_sales`.  
 3. **Top Genre Identification**  
-   Find genres that consistently lead to higher sales.
+   Find genres that tend to achieve higher sales when they receive good reviews.  
 4. **Pre-Development Decision Support**  
-   Offer insights to help teams select game genres before committing time and resources.
+   Help game studios choose which genres to pursue using data-informed predictions.
 
 ---
 
 ## Motivation  
-Making a game is expensive and risky. Often, the genre is chosen based on gut feeling or market trends that may already be outdated.  
-We wanted to build a system where **data leads creativity** — not replaces it.  
-This project aims to support:
-- **Indie studios** trying to find a niche
-- **Publishers** evaluating pitch decks
-- **Analysts** forecasting sales potential
+Making games is expensive and risky. The wrong genre choice could waste months of effort and budget.  
+This project flips that problem: what if we could use historical data to **guide our genre choice**?  
+Instead of relying on assumptions, we built a model that uses actual review and sales data to help developers answer:
+> _What genre should we build next?_
 
-By building a data-informed foundation for **genre selection**, this project helps reduce uncertainty in game development planning.
+By showing that even one well-chosen feature (critic score) can be predictive, this project empowers teams to make smarter creative decisions backed by evidence.
 
 ---
 
@@ -40,17 +37,17 @@ We used three datasets:
 - **Steam Game Metadata** (`steam.csv`)
 - **Steam Top Revenue 2024** (`Steam_2024_bestRevenue_1500.csv`)
 
-These provided key information such as `total_sales`, `critic_score`, `genre`, and long-term player trends.
+These provided fields like `total_sales`, `critic_score`, `genre`, `release_date`, and Steam player trends.
 
 ---
 
 ## Findings  
-- We trained a linear regression model using only `critic_score_scaled` to predict `log_total_sales` across top 5 genres.
-- Metrics like **R²** and **RMSE** were used to evaluate model performance per genre.
-- **Shooter**, **Sports**, and **Action** titles with higher critic scores were consistently more successful.
-- We introduced a derived feature: `impact_score = critic_score_scaled × log_total_sales`.
-- Steam user base trends (2018–2025) show an increasing market opportunity.
-- Hypothesis tests showed **price and genre both significantly influence sales** (p < 0.05).
+- We trained a regression model using **only** `critic_score_scaled` to predict `log_total_sales`.  
+- Models were built separately for the **top 5 most frequent genres**.  
+- Evaluation with **R²** and **RMSE** showed moderate prediction power, especially in Shooter, Sports, and Action games.  
+- We created an `impact_score` by multiplying critic score with log sales.  
+- Steam user growth from 2018 to 2025 shows a continuously expanding gaming market.  
+- Hypothesis tests showed **price** and **genre** significantly affect sales (p-value < 0.05).
 
 ---
 
@@ -64,41 +61,60 @@ These provided key information such as `total_sales`, `critic_score`, `genre`, a
 ---
 
 ## Analysis Plan  
-1. **Data Cleaning & Preparation**
-   - Removed rows with missing or zero values for key fields.
-   - Filtered to top 5 most frequent genres to reduce noise.
+1. **Data Cleaning**
+   - Removed rows with missing or zero values for critic score, sales, or genre.
+   - Filtered to the top 5 most frequent genres.
 
 2. **Feature Engineering**
-   - Added `log_total_sales` and `critic_score_scaled`
-   - Created `impact_score` to capture compound effects
+   - `log_total_sales`: Log-transformed version of sales for scale correction.
+   - `critic_score_scaled`: Normalized critic scores.
+   - `impact_score`: Multiplied critic score by log sales to represent influence strength.
 
 3. **Modeling**
-   - Trained 5 Linear Regression models (one per genre)
-   - Used only `critic_score_scaled` as input
+   - Built 5 separate Linear Regression models (one per genre).
+   - Each model uses **only** `critic_score_scaled` as input to predict `log_total_sales`.
 
 4. **Statistical Testing**
-   - Validated assumptions about genre and pricing influence
-   - Confirmed statistically significant effects on sales
+   - Price vs. Sales  
+     - H₀: Price has no effect on sales  
+     - H₁: Price significantly affects sales  
+   - Genre vs. Sales  
+     - H₀: Genre does not influence sales  
+     - H₁: Some genres perform significantly better than others
 
 ---
 
 ## Key Visualizations  
-- Regression lines: Critic Score vs. Log Sales by Genre  
-- Average Sales per Genre (Critic Score ≥ 8.0)  
-- Boxplots for Sales Variability by Genre  
-- Steam Total & Active Player Trend (2018–2025)
+- 📈 Regression plots: Critic Score vs. Log Sales (per genre)  
+- 📊 Bar charts: Average Sales by Genre (Critic Score ≥ 8.0)  
+- 📉 Steam user trends (2018–2025)  
+- 📦 Box plots: Sales variability by genre
 
 ---
 
 ## Expected Outcomes  
-- Help developers pick genres that align with sales potential  
-- Show that critic score has measurable impact depending on genre  
-- Create a simple, interpretable ML model to support pre-production planning  
-- Demonstrate that even a single well-chosen feature can offer business value in prediction
+- Identify which genres offer higher commercial success based on critic reviews.  
+- Help game designers make early decisions on **which genre to develop**.  
+- Show that even a **single feature ML model** can provide helpful business insights.  
+- Support better planning in marketing, pricing, and production.
 
 ---
 
-## Summary Thought  
-This project does not claim to perfectly predict sales. Instead, it shows that with even basic modeling, **we can transform raw data into actionable strategy**.  
-For anyone planning a game, this work asks:  
-> _What if your next genre choice wasn’t a guess?_
+## 📚 Glossary – Key Terms Explained
+
+- **Genre** → The category or type of a game (e.g., Action, Shooter, Sports).  
+- **Critic Score** → A numerical review score (typically out of 100) from professional reviewers.  
+- **Total Sales** → Number of units sold (in millions).  
+- **Log Total Sales** → A transformation using `log(sales)` to reduce skew and improve regression models.  
+- **R² Score** → Explains how well the model fits the data (1 = perfect, 0 = no fit).  
+- **RMSE** → Measures average error in prediction. Lower = better.  
+- **Impact Score** → Our own feature: `critic_score_scaled × log_total_sales`, used to estimate influence.  
+- **One-Feature ML Task** → A machine learning task where only one independent variable (feature) is used to predict an outcome.
+
+---
+
+## Final Note  
+This project does not aim to perfectly forecast sales — but rather to give developers a **clearer lens** to see which paths are worth exploring.  
+Because even when creativity leads, **data can guide**.
+
+> 🎮 _What if your next genre choice wasn’t a guess?_
